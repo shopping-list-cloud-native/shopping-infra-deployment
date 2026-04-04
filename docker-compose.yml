@@ -70,6 +70,46 @@ services:
       - "8003:8000"
     depends_on:
       - auth-service
+      - budget-service
+      - io-service
+      - items-service
+    networks:
+      - app-net
+
+  items-service:
+    build:
+      context: ../shopping-items-service
+    container_name: shopping-items-service
+    restart: unless-stopped
+    env_file:
+      - ../shopping-items-service/.env.example
+    depends_on:
+      - budget-service
+      - io-service
+    networks:
+      - app-net
+
+  budget-service:
+    build:
+      context: ../shopping-budget-service
+    container_name: shopping-budget-service
+    restart: unless-stopped
+    env_file:
+      - ../shopping-budget-service/.env.example
+    depends_on:
+      - io-service
+      - notification-service
+    networks:
+      - app-net
+
+  notification-service:
+    build:
+      context: ../shopping-notification-service
+    container_name: shopping-notification-service
+    restart: unless-stopped
+    env_file:
+      - ../shopping-notification-service/.env.example
+    depends_on:
       - io-service
     networks:
       - app-net

@@ -1,0 +1,22 @@
+_format_version: "3.0"
+
+services:
+  - name: auth-service
+    url: http://shopping_auth-service:8000
+    routes:
+      - name: auth-routes
+        paths:
+          - /auth
+        strip_path: false
+
+  - name: list-manager-service
+    url: http://shopping_list-manager-service:8000
+    routes:
+      - name: list-routes
+        paths:
+          - /lists
+        strip_path: false
+      - name: notification-routes
+        paths:
+          - /notifications
+        strip_path: false

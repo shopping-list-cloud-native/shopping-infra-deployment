@@ -1,6 +1,29 @@
 version: "3.9"
 
 services:
+  kong:
+    image: kong:3.7
+    container_name: shopping-kong
+    restart: unless-stopped
+    environment:
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: /kong/declarative/kong.yml
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_ACCESS_LOG: /dev/stdout
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_LISTEN: 0.0.0.0:8001
+    ports:
+      - "8000:8000"
+      - "8004:8001"
+    volumes:
+      - ./kong/kong.yml:/kong/declarative/kong.yml:ro
+    depends_on:
+      - auth-service
+      - list-manager-service
+    networks:
+      - frontend-net
+
   postgres:
     image: postgres:16
     container_name: shopping-postgres
@@ -15,7 +38,7 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ../../docs/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
     networks:
-      - app-net
+      - db-net
 
   pgadmin:
     image: dpage/pgadmin4:8
@@ -29,7 +52,7 @@ services:
     depends_on:
       - postgres
     networks:
-      - app-net
+      - db-net
 
   io-service:
     build:
@@ -38,12 +61,11 @@ services:
     restart: unless-stopped
     env_file:
       - ../shopping-io-service/.env.example
-    ports:
-      - "8001:8000"
     depends_on:
       - postgres
     networks:
-      - app-net
+      - backend-net
+      - db-net
 
   auth-service:
     build:
@@ -52,12 +74,11 @@ services:
     restart: unless-stopped
     env_file:
       - ../shopping-auth-service/.env.example
-    ports:
-      - "8002:8000"
     depends_on:
       - io-service
     networks:
-      - app-net
+      - frontend-net
+      - backend-net
 
   list-manager-service:
     build:
@@ -66,15 +87,14 @@ services:
     restart: unless-stopped
     env_file:
       - ../shopping-list-manager-service/.env.example
-    ports:
-      - "8003:8000"
     depends_on:
       - auth-service
       - budget-service
       - io-service
       - items-service
     networks:
-      - app-net
+      - frontend-net
+      - backend-net
 
   items-service:
     build:
@@ -87,7 +107,7 @@ services:
       - budget-service
       - io-service
     networks:
-      - app-net
+      - backend-net
 
   budget-service:
     build:
@@ -100,7 +120,7 @@ services:
       - io-service
       - notification-service
     networks:
-      - app-net
+      - backend-net
 
   notification-service:
     build:
@@ -112,11 +132,15 @@ services:
     depends_on:
       - io-service
     networks:
-      - app-net
+      - backend-net
 
 volumes:
   postgres_data:
 
 networks:
-  app-net:
+  frontend-net:
+    driver: bridge
+  backend-net:
+    driver: bridge
+  db-net:
     driver: bridge

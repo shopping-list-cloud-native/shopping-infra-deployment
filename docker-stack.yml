@@ -179,7 +179,7 @@ configs:
   kong-config:
     file: ./kong/kong.yml
   schema-sql:
-    file: ../../docs/schema.sql
+    file: ./db/schema.sql
 
 networks:
   frontend-net:

@@ -13,6 +13,7 @@ services:
       - --host=unix:///var/run/docker.sock
     ports:
       - "23751:2375"
+      - "9443:9443"
     volumes:
       - swarm-manager-data:/var/lib/docker
     networks:

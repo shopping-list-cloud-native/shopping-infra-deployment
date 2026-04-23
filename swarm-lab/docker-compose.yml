@@ -17,6 +17,7 @@ services:
       - "3000:3000"
       - "9090:9090"
       - "5050:5050"
+      - "8000:8000"
     volumes:
       - swarm-manager-data:/var/lib/docker
     networks:

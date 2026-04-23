@@ -20,7 +20,7 @@ wait_for_docker() {
 }
 
 echo "Pornesc nodurile dind..."
-docker-compose -f "${SCRIPT_DIR}/docker-compose.yml" up -d
+docker compose -f "${SCRIPT_DIR}/docker-compose.yml" up -d
 
 echo "Astept daemon-ele Docker..."
 wait_for_docker "tcp://127.0.0.1:23751"

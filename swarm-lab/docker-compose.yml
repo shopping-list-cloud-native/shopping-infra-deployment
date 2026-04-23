@@ -14,6 +14,9 @@ services:
     ports:
       - "23751:2375"
       - "9443:9443"
+      - "3000:3000"
+      - "9090:9090"
+      - "5050:5050"
     volumes:
       - swarm-manager-data:/var/lib/docker
     networks:

@@ -1,0 +1,30 @@
+name: Deploy Swarm Stack
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on:
+      - self-hosted
+      - linux
+      - x64
+      - swarm
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Show Docker context
+        run: |
+          export DOCKER_HOST=tcp://127.0.0.1:23751
+          docker info
+
+      - name: Deploy shopping stack
+        run: |
+          export DOCKER_HOST=tcp://127.0.0.1:23751
+          docker stack deploy -c docker-stack.yml shopping
+          docker stack services shopping

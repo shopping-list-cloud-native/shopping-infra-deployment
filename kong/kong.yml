@@ -2,7 +2,7 @@ _format_version: "3.0"
 
 services:
   - name: auth-service
-    url: http://shopping_auth-service:8000
+    url: http://auth-service:8000
     routes:
       - name: auth-routes
         paths:
@@ -32,7 +32,7 @@ services:
           credentials: true
 
   - name: list-manager-service
-    url: http://shopping_list-manager-service:8000
+    url: http://list-manager-service:8000
     routes:
       - name: list-routes
         paths:
